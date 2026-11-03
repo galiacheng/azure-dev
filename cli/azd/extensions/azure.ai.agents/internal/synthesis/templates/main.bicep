@@ -87,6 +87,9 @@ param acrPullAssigned bool = false
 @description('Unique access operation ID persisted by azd before deployment.')
 param acrAccessOperationId string = ''
 
+@description('Registry pull role persisted with the access operation.')
+param acrPullRoleDefinitionId string = ''
+
 // Network isolation parameters (see modules/resources.bicep for semantics).
 // All default off so an absent network: block yields a public account.
 
@@ -150,6 +153,7 @@ module resources 'modules/resources.bicep' = {
     existingAcrResourceId: existingAcrResourceId
     acrPullAssigned: acrPullAssigned
     acrAccessOperationId: acrAccessOperationId
+    acrPullRoleDefinitionId: acrPullRoleDefinitionId
     enableNetworkIsolation: enableNetworkIsolation
     useManagedEgress: useManagedEgress
     vnetId: vnetId
