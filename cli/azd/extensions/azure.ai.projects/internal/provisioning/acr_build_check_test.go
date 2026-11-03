@@ -29,6 +29,7 @@ import (
 )
 
 func TestACRRemoteBuildPreflight(t *testing.T) {
+	t.Setenv(synthesis.ACRReuseEnvVar, "true")
 	for _, tt := range []struct {
 		name, service, endpoint, provider string
 		classic, canonical, noSelector    bool
@@ -132,6 +133,7 @@ func TestACRRemoteBuildPreflight(t *testing.T) {
 }
 
 func TestACRRemoteBuildPreflightUsesOnDiskSelection(t *testing.T) {
+	t.Setenv(synthesis.ACRReuseEnvVar, "true")
 	for _, layer := range []bool{false, true} {
 		for _, params := range []bool{false, true} {
 			t.Run(fmt.Sprintf("layer=%t/params=%t", layer, params), func(t *testing.T) {
@@ -222,6 +224,7 @@ func TestACRRemoteBuildLookupFailureStopsPreflight(t *testing.T) {
 }
 
 func TestACRRemoteBuildRejectsBeforePersistingPromptChoices(t *testing.T) {
+	t.Setenv(synthesis.ACRReuseEnvVar, "true")
 	for _, test := range []struct{ abac, onDisk bool }{{false, false}, {true, false}, {false, true}, {true, true}} {
 		t.Run(fmt.Sprintf("ABAC=%t/onDisk=%t", test.abac, test.onDisk), func(t *testing.T) {
 			root := t.TempDir()
@@ -316,6 +319,7 @@ func TestACROnDiskLocalBuildValidatesPromptedScopeBeforeWrites(t *testing.T) {
 				{name: "compile failure", subscription: "sub", compileFailure: true, wantError: "invalid authored template"},
 			} {
 				t.Run(route.name+"/"+params+"/"+tt.name, func(t *testing.T) {
+					t.Setenv(synthesis.ACRReuseEnvVar, "true")
 					root := t.TempDir()
 					options := &azdext.ProvisioningOptions{Provider: FoundryProviderName}
 					raw := "infra:\n  provider: microsoft.foundry\n"

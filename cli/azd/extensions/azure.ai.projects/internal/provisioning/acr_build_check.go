@@ -64,11 +64,15 @@ func (c *ACRRemoteBuildCheck) Validate(
 }
 
 func acrBuildCheckFailure(err error) *azdext.ValidationCheckResponse {
+	suggestion := acrRemoteBuildSuggestion
+	if local, ok := errors.AsType[*azdext.LocalError](err); ok && local.Suggestion != "" {
+		suggestion = local.Suggestion
+	}
 	return &azdext.ValidationCheckResponse{Results: []*azdext.ValidationCheckResult{{
 		Severity:     azdext.ValidationCheckSeverity_VALIDATION_CHECK_SEVERITY_ERROR,
 		DiagnosticId: ACRRemoteBuildRuleID,
 		Message:      err.Error(),
-		Suggestion:   acrRemoteBuildSuggestion,
+		Suggestion:   suggestion,
 	}}}
 }
 
@@ -88,8 +92,14 @@ func (c *ACRRemoteBuildCheck) ValidateProject(
 		AcceptedHosts: FoundryProvisioningServiceHosts, PreserveVarRefs: true,
 	}
 	remote, err := synthesis.RequiresRemoteACRBuild(in)
-	if err != nil || !remote {
+	if err != nil {
 		return err
+	}
+	if err := synthesis.RequireACRReuseForProject(ctx, c.azdClient, project); err != nil {
+		return err
+	}
+	if !remote {
+		return nil
 	}
 	in.ServiceName, err = findFoundryProjectService(raw)
 	if err != nil {

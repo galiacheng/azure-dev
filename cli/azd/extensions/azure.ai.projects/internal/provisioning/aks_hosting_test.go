@@ -230,6 +230,7 @@ func TestBYORegistryValidationBeforeLifecycleWrites(t *testing.T) {
 		{name: "invalid hosting", invalid: true, expectedError: "conflict with azure.yaml"},
 	} {
 		t.Run(test.name, func(t *testing.T) {
+			t.Setenv(synthesis.ACRReuseEnvVar, "true")
 			p, fake := offlineBYOProvider(t)
 			env := &resolveEnvStubEnvServer{envName: "test"}
 			p.azdClient = newResolveEnvTestClient(t, env, &resolveEnvStubPromptServer{})
@@ -291,6 +292,7 @@ func TestBYORegistryPreviewPreservesReadOnlyRoleProof(t *testing.T) {
 		"Microsoft.ContainerRegistry/registries/registry"
 	for _, abac := range []bool{false, true} {
 		t.Run(fmt.Sprintf("ABAC=%t", abac), func(t *testing.T) {
+			t.Setenv(synthesis.ACRReuseEnvVar, "true")
 			p, fake := offlineBYOProvider(t)
 			env := &resolveEnvStubEnvServer{envName: "test"}
 			p.azdClient = newResolveEnvTestClient(t, env, &resolveEnvStubPromptServer{})
