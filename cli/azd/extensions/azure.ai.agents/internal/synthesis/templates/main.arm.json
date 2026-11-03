@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.48.1.52935",
-      "templateHash": "15035698000862433633"
+      "templateHash": "13498282126448333799"
     }
   },
   "definitions": {
@@ -180,6 +180,13 @@
       "defaultValue": "",
       "metadata": {
         "description": "Registry pull role persisted with the access operation."
+      }
+    },
+    "acrOwnedAssignments": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Owned registry grants retained for recovery after local state loss."
       }
     },
     "enableNetworkIsolation": {
