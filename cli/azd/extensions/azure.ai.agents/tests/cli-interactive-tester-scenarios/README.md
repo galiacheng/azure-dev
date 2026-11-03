@@ -355,6 +355,7 @@ in any order, any time.
 | `tier0/0.32-init-adopt-cancel-replacement.yaml` | Cancelling the template replacement picker leaves no project files or environment |
 | `tier0/0.33-invoke-a2a-version-validation.yaml` | A2A preview help and gating, explicit file versions when enabled, unsupported/empty versions, rejection on non-A2A protocols, and local A2A discovery |
 | `tier0/0.34-init-byo-aks-infra.yaml` | BYO AKS Terraform rejection without mutations and local standard Bicep eject; no Azure or Kubernetes operations |
+| `tier0/0.35-init-acr-existing-project-template.yaml` | `init --acr-resource-id` rejects a template's referenced existing project endpoint before creating project files or an environment |
 | `tier0/0.35-run-invoke-local-a2a.yaml` | Terminal-only A2A-only `run` and local 1.0 invoke: text, unchanged file bytes, raw JSON/SSE, allocated port, fixed `POST /a2a` route, no Foundry headers/state, and unsupported flags |
 
 The invocation lifecycle scenarios above are offline help/validation checks, not live execution tests.
@@ -807,6 +808,10 @@ the orchestrator auto-derives from the scenarios directory path:
 ```sh
 cp -r "{fixtures_dir}/from-code/." "$cwd"
 ```
+
+`fixtures/acr-existing-project/` contains a source-build template whose project
+service references an existing endpoint. The Tier 0 ACR validation scenario
+asserts that init rejects this combination without authentication or local writes.
 
 The orchestrator computes `fixtures_dir` as the tester-side absolute path of the
 `fixtures/` subdirectory inside the scenarios directory (WSL-translated on Windows,

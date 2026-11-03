@@ -280,6 +280,13 @@ environment to create another project.
 
 ### Reuse an external container registry
 
+For source-built hosted agents in a new Foundry project, select an existing
+Azure Container Registry by its full ARM resource ID:
+
+```sh
+azd ai project add --new-project --acr-resource-id "/subscriptions/<subscription-id>/resourceGroups/<external-resource-group>/providers/Microsoft.ContainerRegistry/registries/<registry-name>"
+```
+
 This is supported with Bicep only. The registry must be in the Foundry project's
 subscription (`AZURE_SUBSCRIPTION_ID`) and outside the Foundry resource group
 because `azd down` deletes that group. Cross-subscription registry reuse is not
@@ -336,12 +343,21 @@ This applies to local and remote builds, JSON parameter files, and
 `.bicepparam` files, including custom root and infrastructure-layer routes.
 An invalid final registry selection leaves those choices unpersisted.
 
+Before provisioning, the flag overrides environment defaults and saves
+`AZURE_CONTAINER_REGISTRY_RESOURCE_ID` with `AZD_FOUNDRY_ACR_MODE=reuse-connect`.
 You can select a registry before adding agents; the selection remains pending
 until a source-built agent requires it, including across project-only provisioning
 and teardown. Configured project or account names do not discard an unused
 selection. Source initialization validates environment-only selections against
 the root or Foundry-layer resource group retained by setup before changing files
 or environment values.
+Interactive setup validates the selection against the final chosen subscription
+and planned teardown group before scaffolding a new project or environment.
+The validated subscription is reused without a second selection prompt.
+An explicit empty value,
+an existing project selector, or a manifest containing only code, prebuilt-image, or
+non-container agents is rejected. Without a selector, source builds continue
+to create a registry automatically.
 
 Once a project has a deployed registry binding, registry migration is not
 supported. Repeating setup with the same selection preserves the deployed
